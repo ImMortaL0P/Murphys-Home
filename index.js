@@ -3,17 +3,15 @@ const app = express();
 
 const KeepAlive = require("./keep_alive.js");
 
-
 function keepAlive() {
   setInterval(() => {
     console.log("Sending ping request to keep bot alive...");
     fetch("http://localhost:3000") // Replace with your actual URL if on an external server
-      .then(res => res.text())
-      .then(text => console.log(text))
-      .catch(err => console.error("Error with KeepAlive request:", err));
+      .then((res) => res.text())
+      .then((text) => console.log(text))
+      .catch((err) => console.error("Error with KeepAlive request:", err));
   }, 25000); // 25 seconds interval
 }
-
 
 app.listen(3000, () => {
   console.log("Project is running!");
@@ -32,6 +30,25 @@ const client = new Client({
     IntentsBitField.Flags.MessageContent, // Required for reading message content
   ],
 });
+
+client.once("ready", () => {
+  console.log(`Logged in as ${client.user.tag}!`);
+
+  // Setting the bot's status
+  client.user.setPresence({
+    activities: [
+      {
+        name: "with code", // Activity (can be 'Playing', 'Watching', 'Listening to', or 'Streaming')
+        type: "PLAYING", // Other types: "WATCHING", "LISTENING", "STREAMING"
+      },
+    ],
+    status: "online", // Options: 'online', 'idle', 'dnd', 'invisible'
+  });
+
+  console.log("Bot's status has been set!");
+});
+
+//message and commands
 
 client.on("messageCreate", (message) => {
   // Ignore bot's own messages to prevent infinite loops
